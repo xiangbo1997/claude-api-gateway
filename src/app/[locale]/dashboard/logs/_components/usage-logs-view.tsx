@@ -469,14 +469,18 @@ export function UsageLogsView({
                       className="gap-2 text-destructive hover:text-destructive"
                     >
                       <Trash2 className="h-4 w-4" />
-                      {hasFilters() ? t("logs.actions.clearLogsFiltered") : t("logs.actions.clearLogsAll")}
+                      {hasFilters()
+                        ? t("logs.actions.clearLogsFiltered")
+                        : t("logs.actions.clearLogsAll")}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>{t("logs.actions.clearLogsConfirmTitle")}</AlertDialogTitle>
                       <AlertDialogDescription className="space-y-2">
-                        <span className="block">{t("logs.actions.clearLogsConfirmDescription")}</span>
+                        <span className="block">
+                          {t("logs.actions.clearLogsConfirmDescription")}
+                        </span>
                         <span className="block font-semibold text-destructive">
                           {t("logs.actions.clearLogsWarning")}
                         </span>
@@ -484,7 +488,9 @@ export function UsageLogsView({
                           {isPreviewLoading
                             ? t("logs.actions.clearLogsPreviewLoading")
                             : clearPreviewCount !== null
-                              ? t("logs.actions.clearLogsPreview", { count: clearPreviewCount.toLocaleString() })
+                              ? t("logs.actions.clearLogsPreview", {
+                                  count: clearPreviewCount.toLocaleString(),
+                                })
                               : ""}
                         </span>
                       </AlertDialogDescription>

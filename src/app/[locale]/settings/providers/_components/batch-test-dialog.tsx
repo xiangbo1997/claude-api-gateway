@@ -68,7 +68,12 @@ const inferSubStatus = (
   | "invalid_request" => {
   if (isSuccess) return "success";
   const msg = message.toLowerCase();
-  if (msg.includes("429") || msg.includes("rate") || msg.includes("限流") || msg.includes("quota")) {
+  if (
+    msg.includes("429") ||
+    msg.includes("rate") ||
+    msg.includes("限流") ||
+    msg.includes("quota")
+  ) {
     return "rate_limit";
   }
   if (msg.includes("401") || msg.includes("403") || msg.includes("认证") || msg.includes("auth")) {
@@ -125,9 +130,7 @@ export function BatchTestDialog({ providers }: BatchTestDialogProps) {
 
       // 更新为测试中状态
       setResults((prev) =>
-        prev.map((r) =>
-          r.providerId === provider.id ? { ...r, status: "testing" } : r
-        )
+        prev.map((r) => (r.providerId === provider.id ? { ...r, status: "testing" } : r))
       );
 
       try {
@@ -199,14 +202,41 @@ export function BatchTestDialog({ providers }: BatchTestDialogProps) {
         let content: string | undefined;
         let rawResponse: string | undefined;
         let httpStatusCode: number | undefined;
-        let usage: { input_tokens?: number; output_tokens?: number; cache_creation_input_tokens?: number; cache_read_input_tokens?: number } | undefined;
+        let usage:
+          | {
+              input_tokens?: number;
+              output_tokens?: number;
+              cache_creation_input_tokens?: number;
+              cache_read_input_tokens?: number;
+            }
+          | undefined;
         let streamInfo: { chunksReceived?: number; format?: string } | undefined;
-        let validationDetails: { httpPassed: boolean; latencyPassed: boolean; contentPassed: boolean } | undefined;
+        let validationDetails:
+          | { httpPassed: boolean; latencyPassed: boolean; contentPassed: boolean }
+          | undefined;
 
         if (result.ok) {
           if (isGemini) {
             // Gemini 类型：数据在 result.data.details 下
-            const geminiData = result.data as { success: boolean; message: string; details?: { responseTime?: number; model?: string; content?: string; rawResponse?: string; httpStatusCode?: number; usage?: Record<string, unknown>; streamInfo?: { chunksReceived?: number }; validationDetails?: { httpPassed: boolean; latencyPassed: boolean; contentPassed: boolean }; error?: string } };
+            const geminiData = result.data as {
+              success: boolean;
+              message: string;
+              details?: {
+                responseTime?: number;
+                model?: string;
+                content?: string;
+                rawResponse?: string;
+                httpStatusCode?: number;
+                usage?: Record<string, unknown>;
+                streamInfo?: { chunksReceived?: number };
+                validationDetails?: {
+                  httpPassed: boolean;
+                  latencyPassed: boolean;
+                  contentPassed: boolean;
+                };
+                error?: string;
+              };
+            };
             const details = geminiData?.details;
             errorMsg = details?.error || geminiData?.message;
             latencyMs = details?.responseTime ?? 0;
@@ -226,12 +256,14 @@ export function BatchTestDialog({ providers }: BatchTestDialogProps) {
             content = data?.content;
             rawResponse = data?.rawResponse;
             httpStatusCode = data?.httpStatusCode;
-            usage = data?.usage ? {
-              input_tokens: data.usage.inputTokens,
-              output_tokens: data.usage.outputTokens,
-              cache_creation_input_tokens: data.usage.cacheCreationInputTokens,
-              cache_read_input_tokens: data.usage.cacheReadInputTokens,
-            } : undefined;
+            usage = data?.usage
+              ? {
+                  input_tokens: data.usage.inputTokens,
+                  output_tokens: data.usage.outputTokens,
+                  cache_creation_input_tokens: data.usage.cacheCreationInputTokens,
+                  cache_read_input_tokens: data.usage.cacheReadInputTokens,
+                }
+              : undefined;
             streamInfo = data?.streamInfo
               ? { chunksReceived: data.streamInfo.chunksReceived, format: undefined }
               : undefined;
@@ -242,9 +274,7 @@ export function BatchTestDialog({ providers }: BatchTestDialogProps) {
           latencyMs = 0;
         }
 
-        const message = isSuccess
-          ? `Test passed in ${latencyMs}ms`
-          : errorMsg || "Test failed";
+        const message = isSuccess ? `Test passed in ${latencyMs}ms` : errorMsg || "Test failed";
 
         // 构建详细结果数据
         const resultData: UnifiedTestResultData = {
@@ -449,9 +479,7 @@ export function BatchTestDialog({ providers }: BatchTestDialogProps) {
                       <span className="font-medium">{r.providerName}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      {r.status === "pending" && (
-                        <Badge variant="outline">{t("pending")}</Badge>
-                      )}
+                      {r.status === "pending" && <Badge variant="outline">{t("pending")}</Badge>}
                       {r.status === "testing" && (
                         <Badge variant="secondary">
                           <Loader2 className="h-3 w-3 animate-spin mr-1" />
@@ -495,9 +523,7 @@ export function BatchTestDialog({ providers }: BatchTestDialogProps) {
                   {viewingResult?.latencyMs && ` - ${viewingResult.latencyMs}ms`}
                 </DialogDescription>
               </DialogHeader>
-              {viewingResult?.resultData && (
-                <TestResultCard result={viewingResult.resultData} />
-              )}
+              {viewingResult?.resultData && <TestResultCard result={viewingResult.resultData} />}
             </DialogContent>
           </Dialog>
 

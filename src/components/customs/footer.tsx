@@ -22,7 +22,7 @@ export async function Footer() {
         <p className="text-center sm:text-left">
           © {year} Claude API Gateway · v{version}
         </p>
-{/* GitHub 链接已移除 */}
+        {/* GitHub 链接已移除 */}
       </div>
     </footer>
   );

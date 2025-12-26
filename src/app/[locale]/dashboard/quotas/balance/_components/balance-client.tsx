@@ -68,7 +68,10 @@ export function BalanceClient() {
         const result = await fetchProviderBalanceFromApi(providerId);
         if (result.ok && result.data) {
           toast.success(t("refreshSuccess"), {
-            description: t("refreshSuccessDesc", { name: providerName, balance: result.data.balance.toFixed(2) }),
+            description: t("refreshSuccessDesc", {
+              name: providerName,
+              balance: result.data.balance.toFixed(2),
+            }),
           });
           fetchData();
         } else if (!result.ok) {
@@ -86,11 +89,16 @@ export function BalanceClient() {
       if (result.ok && result.data) {
         if (result.data.success > 0) {
           toast.success(t("refreshAllSuccess"), {
-            description: t("refreshAllSuccessDesc", { success: result.data.success, failed: result.data.failed }),
+            description: t("refreshAllSuccessDesc", {
+              success: result.data.success,
+              failed: result.data.failed,
+            }),
           });
         }
         if (result.data.failed > 0) {
-          toast.warning(t("refreshAllPartialFailed"), { description: result.data.errors.slice(0, 3).join("\n") });
+          toast.warning(t("refreshAllPartialFailed"), {
+            description: result.data.errors.slice(0, 3).join("\n"),
+          });
         }
         fetchData();
       } else if (!result.ok) {
@@ -116,7 +124,10 @@ export function BalanceClient() {
       const result = await updateProviderBalance(editingProvider.providerId, balance);
       if (result.ok) {
         toast.success(t("updateSuccess"), {
-          description: t("updateSuccessDesc", { name: editingProvider.providerName, balance: balance.toFixed(2) }),
+          description: t("updateSuccessDesc", {
+            name: editingProvider.providerName,
+            balance: balance.toFixed(2),
+          }),
         });
         setEditDialogOpen(false);
         fetchData();
@@ -219,17 +230,26 @@ export function BalanceClient() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleRefreshSingle(provider.providerId, provider.providerName)}
+                        onClick={() =>
+                          handleRefreshSingle(provider.providerId, provider.providerName)
+                        }
                         disabled={refreshing}
                         title={t("refreshFromApi")}
                       >
                         <RefreshCw
                           className={`h-4 w-4 ${
-                            refreshing && refreshingProviderId === provider.providerId ? "animate-spin" : ""
+                            refreshing && refreshingProviderId === provider.providerId
+                              ? "animate-spin"
+                              : ""
                           }`}
                         />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(provider)} title={t("editBalance")}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleOpenEdit(provider)}
+                        title={t("editBalance")}
+                      >
                         <Edit2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -238,7 +258,9 @@ export function BalanceClient() {
               ))}
               {providers.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-muted-foreground">{t("noProviders")}</TableCell>
+                  <TableCell colSpan={4} className="text-center text-muted-foreground">
+                    {t("noProviders")}
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -250,17 +272,34 @@ export function BalanceClient() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("editBalanceTitle")}</DialogTitle>
-            <DialogDescription>{t("editBalanceDesc", { name: editingProvider?.providerName ?? "" })}</DialogDescription>
+            <DialogDescription>
+              {t("editBalanceDesc", { name: editingProvider?.providerName ?? "" })}
+            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="balance" className="text-right">{t("balanceLabel")}</Label>
-              <Input id="balance" type="number" step="0.01" min="0" value={editBalance} onChange={(e) => setEditBalance(e.target.value)} className="col-span-3" placeholder="0.00" />
+              <Label htmlFor="balance" className="text-right">
+                {t("balanceLabel")}
+              </Label>
+              <Input
+                id="balance"
+                type="number"
+                step="0.01"
+                min="0"
+                value={editBalance}
+                onChange={(e) => setEditBalance(e.target.value)}
+                className="col-span-3"
+                placeholder="0.00"
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>{t("cancel")}</Button>
-            <Button onClick={handleSaveBalance} disabled={saving}>{saving ? t("saving") : t("save")}</Button>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              {t("cancel")}
+            </Button>
+            <Button onClick={handleSaveBalance} disabled={saving}>
+              {saving ? t("saving") : t("save")}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

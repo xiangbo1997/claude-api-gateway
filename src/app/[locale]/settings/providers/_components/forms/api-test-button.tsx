@@ -1,6 +1,14 @@
 "use client";
 
-import { Activity, AlertTriangle, Check, CheckCircle2, ChevronsUpDown, Loader2, XCircle } from "lucide-react";
+import {
+  Activity,
+  AlertTriangle,
+  Check,
+  CheckCircle2,
+  ChevronsUpDown,
+  Loader2,
+  XCircle,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -501,7 +509,9 @@ export function ApiTestButton({
                 }}
               />
               <CommandList className="max-h-[200px]">
-                <CommandEmpty>{modelOptionsLoading ? "Loading..." : "No models found"}</CommandEmpty>
+                <CommandEmpty>
+                  {modelOptionsLoading ? "Loading..." : "No models found"}
+                </CommandEmpty>
                 {!modelOptionsLoading && (
                   <CommandGroup>
                     {modelOptions.map((model) => (
