@@ -1,0 +1,60 @@
+# Dockerfile for Claude API Gateway (China Network Optimized)
+# 使用国内镜像源，解决 Docker Hub 访问问题
+
+# 使用 DaoCloud 镜像源的 Node 镜像作为构建基础
+FROM m.daocloud.io/docker.io/library/node:22-slim AS build-base
+WORKDIR /app
+
+# 安装 bun（使用国内镜像源）
+RUN npm config set registry https://registry.npmmirror.com && \
+    npm install -g bun
+
+FROM build-base AS deps
+COPY package.json ./
+RUN bun install
+
+FROM deps AS build
+COPY . .
+
+# 接收构建参数
+ARG APP_VERSION=dev
+
+# 设置为环境变量供 Next.js 使用
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_APP_VERSION=$APP_VERSION
+
+# 构建时需要的环境变量 (避免数据库初始化错误)
+ENV DSN="postgres://placeholder:placeholder@localhost:5432/placeholder"
+ENV REDIS_URL="redis://localhost:6379"
+ENV CI=true
+
+RUN bun run build
+
+# 运行阶段使用国内镜像源
+FROM m.daocloud.io/docker.io/library/node:22-slim AS runner
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOST=0.0.0.0
+WORKDIR /app
+
+# 配置国内 APT 镜像源并安装依赖
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources 2>/dev/null || true && \
+    apt-get update && \
+    apt-get install -y gnupg curl ca-certificates && \
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update && \
+    apt-get install -y postgresql-client-18 && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=build --chown=node:node /app/public ./public
+COPY --from=build --chown=node:node /app/drizzle ./drizzle
+COPY --from=build --chown=node:node /app/messages ./messages
+COPY --from=build --chown=node:node /app/.next/standalone ./
+COPY --from=build --chown=node:node /app/.next/server ./.next/server
+COPY --from=build --chown=node:node /app/.next/static ./.next/static
+
+USER node
+EXPOSE 3000
+
+CMD ["node", "server.js"]

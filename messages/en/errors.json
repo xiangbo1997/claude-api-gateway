@@ -1,0 +1,70 @@
+{
+  "_comment": "Error messages for English",
+
+  "REQUIRED_FIELD": "{field} is required",
+  "USER_NAME_REQUIRED": "User name is required",
+  "API_KEY_REQUIRED": "API key is required",
+  "PROVIDER_NAME_REQUIRED": "Provider name is required",
+  "PROVIDER_URL_REQUIRED": "Provider URL is required",
+
+  "MIN_LENGTH": "{field} must be at least {min} characters",
+  "MAX_LENGTH": "{field} must not exceed {max} characters",
+  "INVALID_EMAIL": "Please enter a valid email address",
+  "INVALID_URL": "Please enter a valid URL",
+
+  "MIN_VALUE": "{field} must be at least {min}",
+  "MAX_VALUE": "{field} must not exceed {max}",
+  "MUST_BE_INTEGER": "{field} must be an integer",
+  "MUST_BE_POSITIVE": "{field} must be positive",
+
+  "INVALID_TYPE": "{field} has an invalid type",
+  "INVALID_FORMAT": "{field} has an invalid format",
+
+  "DUPLICATE_NAME": "Name '{name}' already exists",
+  "INVALID_RANGE": "{field} must be between {min} and {max}",
+  "EMPTY_UPDATE": "No fields to update",
+
+  "UNAUTHORIZED": "Unauthorized, please log in",
+  "INVALID_CREDENTIALS": "Invalid username or password",
+  "SESSION_EXPIRED": "Session has expired, please log in again",
+  "PERMISSION_DENIED": "Permission denied",
+  "TOKEN_REQUIRED": "Authentication token required",
+  "INVALID_TOKEN": "Invalid authentication token",
+
+  "INTERNAL_ERROR": "Internal server error, please try again later",
+  "DATABASE_ERROR": "Database error",
+  "NOT_FOUND": "Resource not found",
+  "OPERATION_FAILED": "Operation failed",
+  "CREATE_FAILED": "Failed to create, please try again",
+  "UPDATE_FAILED": "Failed to update, please try again",
+  "DELETE_FAILED": "Failed to delete, please try again",
+
+  "CONNECTION_FAILED": "Connection failed",
+  "TIMEOUT": "Request timeout",
+  "NETWORK_ERROR": "Network error",
+
+  "QUOTA_EXCEEDED": "Quota exceeded",
+  "RATE_LIMIT_EXCEEDED": "Too many requests, please try again later",
+  "RESOURCE_BUSY": "Resource is currently in use",
+  "INVALID_STATE": "Operation not allowed in current state",
+  "CONFLICT": "Operation conflict",
+
+  "RATE_LIMIT_RPM_EXCEEDED": "Rate limit exceeded: {current} requests per minute (limit: {limit}). Resets at {resetTime}",
+  "RATE_LIMIT_5H_EXCEEDED": "5-hour cost limit exceeded: ${current} USD (limit: ${limit} USD). Resets at {resetTime}",
+  "RATE_LIMIT_WEEKLY_EXCEEDED": "Weekly cost limit exceeded: ${current} USD (limit: ${limit} USD). Resets at {resetTime}",
+  "RATE_LIMIT_MONTHLY_EXCEEDED": "Monthly cost limit exceeded: ${current} USD (limit: ${limit} USD). Resets at {resetTime}",
+  "RATE_LIMIT_TOTAL_EXCEEDED": "Total spending limit exceeded: ${current} USD (limit: ${limit} USD)",
+  "RATE_LIMIT_CONCURRENT_SESSIONS_EXCEEDED": "Concurrent sessions limit exceeded: {current} sessions (limit: {limit}). Please wait for active sessions to complete",
+  "RATE_LIMIT_DAILY_QUOTA_EXCEEDED": "Daily quota exceeded: ${current} USD (limit: ${limit} USD). Resets at {resetTime}",
+
+  "USER_NOT_FOUND": "User not found",
+  "USER_CANNOT_MODIFY_SENSITIVE_FIELDS": "Regular users cannot modify quota limits and provider groups",
+  "CREATE_USER_FAILED": "Failed to create user, please try again later",
+  "UPDATE_USER_FAILED": "Failed to update user, please try again later",
+  "DELETE_USER_FAILED": "Failed to delete user, please try again later",
+  "GET_USER_QUOTA_FAILED": "Failed to get user quota information",
+  "EXPIRES_AT_FIELD": "Expiration date",
+  "EXPIRES_AT_MUST_BE_FUTURE": "Expiration date must be in the future",
+  "EXPIRES_AT_TOO_FAR": "Expiration date cannot exceed 10 years",
+  "CANNOT_DISABLE_SELF": "Cannot disable your own account"
+}
