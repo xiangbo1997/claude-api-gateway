@@ -123,7 +123,18 @@
       "refreshing": "Refreshing...",
       "stopAutoRefresh": "Stop Auto-Refresh",
       "startAutoRefresh": "Start Auto-Refresh",
-      "view": "View"
+      "view": "View",
+      "clearLogs": "Clear Logs",
+      "clearLogsAll": "Clear All",
+      "clearLogsFiltered": "Clear Filtered",
+      "clearLogsConfirmTitle": "Confirm Clear Logs",
+      "clearLogsConfirmDescription": "This action will permanently delete the selected log records and cannot be undone. Are you sure you want to continue?",
+      "clearLogsWarning": "Warning: This action is irreversible!",
+      "clearLogsPreview": "Will delete {count} records",
+      "clearLogsPreviewLoading": "Counting...",
+      "clearLogsSuccess": "Successfully cleared {count} records",
+      "clearLogsError": "Clear failed",
+      "clearing": "Clearing..."
     },
     "error": {
       "loadFailed": "Load Failed"

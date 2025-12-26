@@ -4,37 +4,17 @@
 
 <div align="center">
 
-# Claude Code Hub
+# Claude API Gateway
 
 **🚀 智能 AI API 代理中转服务平台｜面向团队的多供应商统一接入、弹性调度与精细化运营中心**
 
-[![Container Image](https://img.shields.io/badge/ghcr.io-ding113%2Fclaude--code--hub-181717?logo=github)](https://github.com/ding113/claude-code-hub/pkgs/container/claude-code-hub)
-[![License](https://img.shields.io/github/license/ding113/claude-code-hub)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/ding113/claude-code-hub)](https://github.com/ding113/claude-code-hub/stargazers)
-[![Telegram Group](https://img.shields.io/badge/Telegram-交流群-blue?logo=telegram)](https://t.me/ygxz_group)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ding113/claude-code-hub)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-Claude Code Hub 通过 Next.js 15 + Hono + PostgreSQL + Redis 组合，实现 Claude/OpenAI 兼容 API 代理、智能负载均衡、实时监控、价格管理与自动化文档，帮助团队安全、可观测地管理多家 AI 服务商。
-
-💬 **加入讨论**：有部署、功能或技术问题？欢迎加入 [Telegram 交流群](https://t.me/ygxz_group) 与社区一起讨论！
+Claude API Gateway 通过 Next.js 15 + Hono + PostgreSQL + Redis 组合，实现 Claude/OpenAI 兼容 API 代理、智能负载均衡、实时监控、价格管理与自动化文档，帮助团队安全、可观测地管理多家 AI 服务商。
 
 </div>
 
 ---
-
-<table>
-<tr>
-<td width="200">
-<a href="https://cubence.com?source=cch">
-<img src="public/readme/cubence.jpg" alt="Cubence Logo" width="180"/>
-</a>
-</td>
-<td>
-<b>💎 特别优惠</b>：<a href="https://cubence.com?source=cch">Cubence</a> 一家稳定高效的AI服务中转平台，为 Claude Code、Codex、Gemini 等AI工具提供中转服务，有着不错的稳定性和性价比。<br/>
-Cubence 为 CCH 的使用用户提供了特别的优惠折扣：在购买时使用优惠券 <code>DING113CCH</code>，可享受 <b>20% 优惠折扣</b> → <a href="https://cubence.com?source=cch">立即访问</a>
-</td>
-</tr>
-</table>
 
 ## ✨ 核心功能 Highlights
 
@@ -283,12 +263,8 @@ Docker Compose 是**首选部署方式**，自动配置数据库、Redis 和应�
 
 ## 🌐 致谢 Acknowledgments
 
-项目基于 [zsio/claude-code-hub](https://github.com/zsio/claude-code-hub) 深度改进，OpenAI 兼容层参考 [router-for-me/CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI)，供应商检测功能参考 [prehisle/relay-pulse](https://github.com/prehisle/relay-pulse)。感谢原作者及社区贡献者！
-
-## ⭐ Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=ding113/claude-code-hub&type=Date)](https://star-history.com/#ding113/claude-code-hub&Date)
+项目基于开源社区的多个优秀项目改进而来，感谢所有贡献者！
 
 ## 📜 许可证 License
 
-本项目采用 [MIT License](LICENSE)，可自由使用与二次开发，仍需遵守条款并保留致谢信息。
+本项目采用 [MIT License](LICENSE)，可自由使用与二次开发。

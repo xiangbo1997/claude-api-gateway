@@ -2,9 +2,9 @@
 .git
 .gitignore
 
-# Node modules and build artifacts
-node_modules
-.next
+# Node modules and build artifacts (排除根目录的，但保留 .next/standalone/node_modules)
+/node_modules
+# .next  # 注释掉以支持预构建部署
 out
 coverage
 dist

@@ -9,6 +9,7 @@ import { getEnvConfig } from "@/lib/config/env.schema";
 import { getSystemSettings } from "@/repository/system-config";
 import { SettingsPageHeader } from "../_components/settings-page-header";
 import { AddProviderDialog } from "./_components/add-provider-dialog";
+import { BatchTestDialog } from "./_components/batch-test-dialog";
 import { ProviderManager } from "./_components/provider-manager";
 import { SchedulingRulesDialog } from "./_components/scheduling-rules-dialog";
 
@@ -41,6 +42,7 @@ export default async function SettingsProvidersPage() {
                 {t("providers.section.leaderboard")}
               </Link>
             </Button>
+            <BatchTestDialog providers={providers} />
             <SchedulingRulesDialog />
             <AddProviderDialog enableMultiProviderTypes={enableMultiProviderTypes} />
           </div>

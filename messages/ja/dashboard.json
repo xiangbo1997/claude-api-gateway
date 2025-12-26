@@ -123,7 +123,18 @@
       "refreshing": "更新中...",
       "stopAutoRefresh": "自動更新を停止",
       "startAutoRefresh": "自動更新を開始",
-      "view": "表示"
+      "view": "表示",
+      "clearLogs": "ログを削除",
+      "clearLogsAll": "すべて削除",
+      "clearLogsFiltered": "フィルタ済みを削除",
+      "clearLogsConfirmTitle": "ログ削除の確認",
+      "clearLogsConfirmDescription": "この操作は選択したログレコードを永久に削除し、元に戻すことはできません。続行してもよろしいですか？",
+      "clearLogsWarning": "警告：この操作は元に戻せません！",
+      "clearLogsPreview": "{count} 件のレコードを削除します",
+      "clearLogsPreviewLoading": "集計中...",
+      "clearLogsSuccess": "{count} 件のレコードを正常に削除しました",
+      "clearLogsError": "削除に失敗しました",
+      "clearing": "削除中..."
     },
     "error": {
       "loadFailed": "読み込み失敗"

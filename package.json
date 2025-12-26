@@ -1,5 +1,5 @@
 {
-  "name": "claude-code-hub",
+  "name": "claude-api-gateway",
   "version": "0.3.0",
   "private": true,
   "scripts": {

@@ -123,7 +123,18 @@
       "refreshing": "Обновление...",
       "stopAutoRefresh": "Остановить автообновление",
       "startAutoRefresh": "Начать автообновление",
-      "view": "Просмотр"
+      "view": "Просмотр",
+      "clearLogs": "Очистить журнал",
+      "clearLogsAll": "Очистить все",
+      "clearLogsFiltered": "Очистить отфильтрованные",
+      "clearLogsConfirmTitle": "Подтвердите очистку журнала",
+      "clearLogsConfirmDescription": "Это действие навсегда удалит выбранные записи журнала и не может быть отменено. Вы уверены, что хотите продолжить?",
+      "clearLogsWarning": "Предупреждение: Это действие необратимо!",
+      "clearLogsPreview": "Будет удалено {count} записей",
+      "clearLogsPreviewLoading": "Подсчет...",
+      "clearLogsSuccess": "Успешно удалено {count} записей",
+      "clearLogsError": "Ошибка очистки",
+      "clearing": "Очистка..."
     },
     "error": {
       "loadFailed": "Ошибка загрузки"

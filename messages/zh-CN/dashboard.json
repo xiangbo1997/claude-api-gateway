@@ -123,7 +123,18 @@
       "refreshing": "刷新中...",
       "stopAutoRefresh": "停止自动刷新",
       "startAutoRefresh": "开启自动刷新",
-      "view": "查看"
+      "view": "查看",
+      "clearLogs": "清除日志",
+      "clearLogsAll": "清除全部",
+      "clearLogsFiltered": "清除当前筛选",
+      "clearLogsConfirmTitle": "确认清除日志",
+      "clearLogsConfirmDescription": "此操作将永久删除选定的日志记录，无法恢复。请确认是否继续？",
+      "clearLogsWarning": "警告：此操作不可逆！",
+      "clearLogsPreview": "将删除 {count} 条记录",
+      "clearLogsPreviewLoading": "正在统计...",
+      "clearLogsSuccess": "已成功清除 {count} 条记录",
+      "clearLogsError": "清除失败",
+      "clearing": "清除中..."
     },
     "error": {
       "loadFailed": "加载失败"

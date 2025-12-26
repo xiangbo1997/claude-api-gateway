@@ -210,6 +210,16 @@ export const providers = pgTable('providers', {
   // Cache TTL override（null = 不覆写，沿用客户端请求）
   cacheTtlPreference: varchar('cache_ttl_preference', { length: 10 }),
 
+  // 上游供应商余额配置
+  // - upstreamBalance: 上游供应商当前余额（USD），支持手动输入或API自动获取
+  // - balanceLastUpdated: 余额最后更新时间
+  // - balanceApiEndpoint: 自定义余额API端点（可选，留空则使用默认端点）
+  // - balanceFetchEnabled: 是否启用自动获取余额（需要供应商支持）
+  upstreamBalance: numeric('upstream_balance', { precision: 15, scale: 6 }),
+  balanceLastUpdated: timestamp('balance_last_updated', { withTimezone: true }),
+  balanceApiEndpoint: varchar('balance_api_endpoint', { length: 512 }),
+  balanceFetchEnabled: boolean('balance_fetch_enabled').default(false),
+
   // 废弃（保留向后兼容，但不再使用）
   tpm: integer('tpm').default(0),
   rpm: integer('rpm').default(0),

@@ -58,8 +58,50 @@
     "tabs": {
       "users": "用戶限額",
       "keys": "密鑰限額",
-      "providers": "供應商限額"
+      "providers": "供應商限額",
+      "balance": "供應商餘額"
     }
+  },
+  "balance": {
+    "title": "供應商餘額",
+    "description": "查看並管理上游供應商的帳戶餘額",
+    "totalBalance": "總餘額",
+    "providerCount": "已設定 {count} 個供應商",
+    "providerBalances": "供應商餘額列表",
+    "providerBalancesDesc": "檢視各供應商的帳戶餘額與最後更新時間",
+    "refreshAll": "全部刷新",
+    "refreshSuccess": "刷新成功",
+    "refreshSuccessDesc": "{name} 餘額已更新為 ${balance}",
+    "refreshFailed": "刷新失敗",
+    "refreshAllSuccess": "批次刷新完成",
+    "refreshAllSuccessDesc": "成功 {success} 個，失敗 {failed} 個",
+    "refreshAllPartialFailed": "部分刷新失敗",
+    "refreshAllFailed": "批次刷新失敗",
+    "editBalanceTitle": "編輯餘額",
+    "editBalanceDesc": "手動設定 {name} 的帳戶餘額",
+    "balanceLabel": "餘額 (USD)",
+    "cancel": "取消",
+    "save": "儲存",
+    "saving": "儲存中...",
+    "invalidBalance": "請輸入有效的餘額金額",
+    "updateSuccess": "更新成功",
+    "updateSuccessDesc": "{name} 餘額已更新為 ${balance}",
+    "updateFailed": "更新失敗",
+    "notSet": "尚未設定",
+    "noProviders": "暫無供應商資料",
+    "refreshFromApi": "從 API 刷新",
+    "editBalance": "編輯餘額",
+    "columns": {
+      "provider": "供應商",
+      "balance": "餘額",
+      "lastUpdated": "最後更新",
+      "actions": "操作"
+    },
+    "autoFetch": {
+      "enabled": "自動刷新",
+      "disabled": "僅手動更新"
+    },
+    "lastUpdatedNever": "尚未更新"
   },
   "users": {
     "title": "用戶限額統計",

@@ -1,10 +1,11 @@
+# Docker Compose 配置 - 使用预构建镜像（无需本地构建）
+# 使用方法: docker compose -f docker-compose.image.yaml up -d
+
 services:
   postgres:
-    image: docker.1ms.run/library/postgres:18
+    image: postgres:17
     container_name: claude-code-hub-db
     restart: unless-stopped
-    # 不对外暴露数据库端口，仅允许容器内部网络访问
-    # 如需调试，可取消注释下行（仅绑定本机）：
     ports:
       - "127.0.0.1:35432:5432"
     env_file:
@@ -13,14 +14,10 @@ services:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-claude_code_hub}
-      # 使用自定义数据目录
       PGDATA: /data/pgdata
-      # 设置时区为上海
       TZ: Asia/Shanghai
       PGTZ: Asia/Shanghai
     volumes:
-      # 持久化数据库数据到本地 ./data/postgres 目录
-      # 挂载到 /data 而不是 /var/lib/postgresql/data 避免权限冲突
       - ./data/postgres:/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-claude_code_hub}"]
@@ -30,14 +27,12 @@ services:
       start_period: 10s
 
   redis:
-    image: docker.1ms.run/library/redis:7-alpine
+    image: redis:7-alpine
     container_name: claude-code-hub-redis
     restart: unless-stopped
     ports:
       - "127.0.0.1:36379:6379"
     volumes:
-      # 持久化 Redis 数据到本地 ./data/redis 目录
-      # 使用 AOF 持久化模式,确保数据不丢失
       - ./data/redis:/data
     command: redis-server --appendonly yes
     healthcheck:
@@ -48,10 +43,7 @@ services:
       start_period: 5s
 
   app:
-    build:
-      context: .
-      dockerfile: deploy/Dockerfile
-    # image: ghcr.io/ding113/claude-code-hub:latest
+    image: ghcr.io/ding113/claude-code-hub:latest
     container_name: claude-code-hub-app
     depends_on:
       postgres:
@@ -62,13 +54,11 @@ services:
       - ./.env
     environment:
       NODE_ENV: production
-      # 容器内使用 Dockerfile 默认端口 3000，对外通过 APP_PORT 暴露（默认 23000）
       DSN: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-claude_code_hub}
       REDIS_URL: redis://redis:6379
       AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
       ENABLE_RATE_LIMIT: ${ENABLE_RATE_LIMIT:-true}
       SESSION_TTL: ${SESSION_TTL:-300}
-      # 设置时区为上海
       TZ: Asia/Shanghai
     ports:
       - "${APP_PORT:-23000}:3000"

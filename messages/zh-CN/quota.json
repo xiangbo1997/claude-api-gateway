@@ -58,8 +58,50 @@
     "tabs": {
       "users": "用户限额",
       "keys": "密钥限额",
-      "providers": "供应商限额"
+      "providers": "供应商限额",
+      "balance": "供应商余额"
     }
+  },
+  "balance": {
+    "title": "供应商余额",
+    "description": "查看和管理上游供应商的账户余额",
+    "totalBalance": "总余额",
+    "providerCount": "已配置 {count} 个供应商",
+    "providerBalances": "供应商余额列表",
+    "providerBalancesDesc": "查看各供应商的账户余额和最后更新时间",
+    "refreshAll": "刷新全部",
+    "refreshSuccess": "刷新成功",
+    "refreshSuccessDesc": "{name} 余额已更新为 ${balance}",
+    "refreshFailed": "刷新失败",
+    "refreshAllSuccess": "批量刷新完成",
+    "refreshAllSuccessDesc": "成功 {success} 个，失败 {failed} 个",
+    "refreshAllPartialFailed": "部分刷新失败",
+    "refreshAllFailed": "批量刷新失败",
+    "editBalanceTitle": "编辑余额",
+    "editBalanceDesc": "手动设置 {name} 的账户余额",
+    "balanceLabel": "余额 (USD)",
+    "cancel": "取消",
+    "save": "保存",
+    "saving": "保存中...",
+    "invalidBalance": "请输入有效的余额金额",
+    "updateSuccess": "更新成功",
+    "updateSuccessDesc": "{name} 余额已更新为 ${balance}",
+    "updateFailed": "更新失败",
+    "notSet": "未设置",
+    "noProviders": "暂无供应商数据",
+    "refreshFromApi": "从 API 刷新",
+    "editBalance": "编辑余额",
+    "columns": {
+      "provider": "供应商",
+      "balance": "余额",
+      "lastUpdated": "最后更新",
+      "actions": "操作"
+    },
+    "autoFetch": {
+      "enabled": "自动刷新",
+      "disabled": "需手动更新"
+    },
+    "lastUpdatedNever": "未更新"
   },
   "users": {
     "title": "用户限额统计",

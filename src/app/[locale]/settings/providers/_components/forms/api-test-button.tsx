@@ -1,8 +1,8 @@
 "use client";
 
-import { Activity, AlertTriangle, CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { Activity, AlertTriangle, Check, CheckCircle2, ChevronsUpDown, Loader2, XCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   getProviderTestPresets,
@@ -11,9 +11,19 @@ import {
   testProviderGemini,
   testProviderUnified,
 } from "@/actions/providers";
+import { getAvailableModelsByProviderType } from "@/actions/model-prices";
 import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -111,6 +121,10 @@ export function ApiTestButton({
   });
   const [isModelManuallyEdited, setIsModelManuallyEdited] = useState(false);
   const [testResult, setTestResult] = useState<UnifiedTestResultData | null>(null);
+  // 模型下拉框相关状态
+  const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
+  const [modelOptions, setModelOptions] = useState<string[]>([]);
+  const [modelOptionsLoading, setModelOptionsLoading] = useState(false);
 
   // Custom configuration state
   const [configMode, setConfigMode] = useState<"preset" | "custom">("preset");
@@ -159,6 +173,15 @@ export function ApiTestButton({
       }
     });
   }, [apiFormat, apiFormatToProviderType, selectedPreset]);
+
+  // 加载模型列表
+  useEffect(() => {
+    setModelOptionsLoading(true);
+    getAvailableModelsByProviderType().then((models) => {
+      setModelOptions(models);
+      setModelOptionsLoading(false);
+    });
+  }, []);
 
   useEffect(() => {
     if (isModelManuallyEdited) {
@@ -449,18 +472,59 @@ export function ApiTestButton({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="test-model">{t("testModel")}</Label>
-        <Input
-          id="test-model"
-          value={testModel}
-          onChange={(e) => {
-            const value = e.target.value;
-            setIsModelManuallyEdited(true);
-            setTestModel(value);
-          }}
-          placeholder={getDefaultModelForFormat(apiFormat)}
-          disabled={isTesting}
-        />
+        <Label>{t("testModel")}</Label>
+        <Popover open={modelDropdownOpen} onOpenChange={setModelDropdownOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={modelDropdownOpen}
+              disabled={isTesting}
+              className="w-full justify-between font-mono text-sm"
+            >
+              <span className="truncate">{testModel || getDefaultModelForFormat(apiFormat)}</span>
+              {modelOptionsLoading ? (
+                <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin opacity-50" />
+              ) : (
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[400px] p-0" align="start">
+            <Command shouldFilter={true}>
+              <CommandInput
+                placeholder={t("testModelDesc")}
+                value={testModel}
+                onValueChange={(value) => {
+                  setIsModelManuallyEdited(true);
+                  setTestModel(value);
+                }}
+              />
+              <CommandList className="max-h-[200px]">
+                <CommandEmpty>{modelOptionsLoading ? "Loading..." : "No models found"}</CommandEmpty>
+                {!modelOptionsLoading && (
+                  <CommandGroup>
+                    {modelOptions.map((model) => (
+                      <CommandItem
+                        key={model}
+                        value={model}
+                        onSelect={(value) => {
+                          setIsModelManuallyEdited(true);
+                          setTestModel(value);
+                          setModelDropdownOpen(false);
+                        }}
+                        className="cursor-pointer font-mono text-sm"
+                      >
+                        {model}
+                        {testModel === model && <Check className="ml-auto h-4 w-4" />}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
         <div className="text-xs text-muted-foreground">{t("testModelDesc")}</div>
       </div>
 

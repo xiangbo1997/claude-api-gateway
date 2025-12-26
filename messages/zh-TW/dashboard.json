@@ -123,7 +123,18 @@
       "refreshing": "重新整理中...",
       "stopAutoRefresh": "停止自動重新整理",
       "startAutoRefresh": "啟用自動重新整理",
-      "view": "檢視"
+      "view": "檢視",
+      "clearLogs": "清除日誌",
+      "clearLogsAll": "清除全部",
+      "clearLogsFiltered": "清除目前篩選",
+      "clearLogsConfirmTitle": "確認清除日誌",
+      "clearLogsConfirmDescription": "此操作將永久刪除選定的日誌記錄，無法復原。確定要繼續嗎？",
+      "clearLogsWarning": "警告：此操作不可逆！",
+      "clearLogsPreview": "將刪除 {count} 筆記錄",
+      "clearLogsPreviewLoading": "正在統計...",
+      "clearLogsSuccess": "已成功清除 {count} 筆記錄",
+      "clearLogsError": "清除失敗",
+      "clearing": "清除中..."
     },
     "error": {
       "loadFailed": "載入失敗"

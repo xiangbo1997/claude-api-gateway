@@ -1,10 +1,21 @@
 "use client";
 
-import { Pause, Play, RefreshCw } from "lucide-react";
+import { Pause, Play, RefreshCw, Trash2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { toast } from "sonner";
 import { getUsageLogs } from "@/actions/usage-logs";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatTokenAmount } from "@/lib/utils";
@@ -38,6 +49,7 @@ export function UsageLogsView({
   billingModelSource = "original",
 }: UsageLogsViewProps) {
   const t = useTranslations("dashboard");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const params = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -45,6 +57,12 @@ export function UsageLogsView({
   const [error, setError] = useState<string | null>(null);
   const [isAutoRefresh, setIsAutoRefresh] = useState(true);
   const [isManualRefreshing, setIsManualRefreshing] = useState(false);
+
+  // 清除日志相关状态
+  const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
+  const [clearPreviewCount, setClearPreviewCount] = useState<number | null>(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
 
   // 追踪新增记录（用于动画高亮）
   const [newLogIds, setNewLogIds] = useState<Set<number>>(new Set());
@@ -136,6 +154,119 @@ export function UsageLogsView({
     setIsManualRefreshing(true);
     await loadData(true); // 刷新时检测新增
     setTimeout(() => setIsManualRefreshing(false), 500);
+  };
+
+  // 构建清理条件（基于当前筛选条件）
+  const buildCleanupConditions = useCallback(() => {
+    const conditions: {
+      beforeDate?: string;
+      afterDate?: string;
+      userIds?: number[];
+      providerIds?: number[];
+      statusCodes?: number[];
+    } = {};
+
+    // 时间范围
+    if (filtersRef.current.endTime) {
+      conditions.beforeDate = new Date(filtersRef.current.endTime).toISOString();
+    }
+    if (filtersRef.current.startTime) {
+      conditions.afterDate = new Date(filtersRef.current.startTime).toISOString();
+    }
+
+    // 用户维度
+    if (filtersRef.current.userId) {
+      conditions.userIds = [filtersRef.current.userId];
+    }
+
+    // 供应商维度
+    if (filtersRef.current.providerId) {
+      conditions.providerIds = [filtersRef.current.providerId];
+    }
+
+    // 状态码维度
+    if (filtersRef.current.statusCode) {
+      conditions.statusCodes = [filtersRef.current.statusCode];
+    }
+
+    return conditions;
+  }, []);
+
+  // 检查是否有筛选条件
+  const hasFilters = useCallback(() => {
+    const f = filtersRef.current;
+    return !!(
+      f.userId ||
+      f.keyId ||
+      f.providerId ||
+      f.startTime ||
+      f.endTime ||
+      f.statusCode ||
+      f.excludeStatusCode200 ||
+      f.model ||
+      f.endpoint ||
+      f.minRetryCount
+    );
+  }, []);
+
+  // 打开清除对话框时预览将删除的数量
+  const handleOpenClearDialog = async () => {
+    setIsClearDialogOpen(true);
+    setIsPreviewLoading(true);
+    setClearPreviewCount(null);
+
+    try {
+      const conditions = buildCleanupConditions();
+      const response = await fetch("/api/admin/log-cleanup/manual", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...conditions, dryRun: true }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setClearPreviewCount(result.totalDeleted);
+      } else {
+        setClearPreviewCount(0);
+      }
+    } catch {
+      setClearPreviewCount(0);
+    } finally {
+      setIsPreviewLoading(false);
+    }
+  };
+
+  // 执行清除日志
+  const handleClearLogs = async () => {
+    setIsClearing(true);
+
+    try {
+      const conditions = buildCleanupConditions();
+      const response = await fetch("/api/admin/log-cleanup/manual", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...conditions, dryRun: false }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          toast.success(t("logs.actions.clearLogsSuccess", { count: result.totalDeleted }));
+          // 清除后刷新数据
+          previousLogsRef.current = new Map();
+          await loadData(false);
+        } else {
+          toast.error(result.error || t("logs.actions.clearLogsError"));
+        }
+      } else {
+        toast.error(t("logs.actions.clearLogsError"));
+      }
+    } catch {
+      toast.error(t("logs.actions.clearLogsError"));
+    } finally {
+      setIsClearing(false);
+      setIsClearDialogOpen(false);
+    }
   };
 
   // 监听 URL 参数变化（筛选/翻页时重置缓存）
@@ -326,6 +457,53 @@ export function UsageLogsView({
                   </>
                 )}
               </Button>
+
+              {/* 清除日志按钮（仅管理员可见） */}
+              {isAdmin && (
+                <AlertDialog open={isClearDialogOpen} onOpenChange={setIsClearDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleOpenClearDialog}
+                      className="gap-2 text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      {hasFilters() ? t("logs.actions.clearLogsFiltered") : t("logs.actions.clearLogsAll")}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>{t("logs.actions.clearLogsConfirmTitle")}</AlertDialogTitle>
+                      <AlertDialogDescription className="space-y-2">
+                        <span className="block">{t("logs.actions.clearLogsConfirmDescription")}</span>
+                        <span className="block font-semibold text-destructive">
+                          {t("logs.actions.clearLogsWarning")}
+                        </span>
+                        <span className="block font-mono text-sm">
+                          {isPreviewLoading
+                            ? t("logs.actions.clearLogsPreviewLoading")
+                            : clearPreviewCount !== null
+                              ? t("logs.actions.clearLogsPreview", { count: clearPreviewCount.toLocaleString() })
+                              : ""}
+                        </span>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel disabled={isClearing}>
+                        {tCommon("cancel")}
+                      </AlertDialogCancel>
+                      <Button
+                        onClick={handleClearLogs}
+                        disabled={isClearing || isPreviewLoading || clearPreviewCount === 0}
+                        variant="destructive"
+                      >
+                        {isClearing ? t("logs.actions.clearing") : t("logs.actions.clearLogs")}
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
             </div>
           </div>
         </CardHeader>

@@ -1,0 +1,50 @@
+# Dockerfile for Claude API Gateway (简化版 - 国内服务器)
+# 跳过 PostgreSQL 客户端安装，避免 GPG 签名问题
+
+FROM docker.1ms.run/oven/bun:slim AS build-base
+WORKDIR /app
+
+FROM build-base AS deps
+COPY package.json ./
+RUN bun install
+
+FROM deps AS build
+COPY . .
+
+# 接收构建参数
+ARG APP_VERSION=dev
+
+# 设置为环境变量供 Next.js 使用
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_APP_VERSION=$APP_VERSION
+
+# 构建时需要的环境变量 (避免数据库初始化错误)
+ENV DSN="postgres://placeholder:placeholder@localhost:5432/placeholder"
+ENV REDIS_URL="redis://localhost:6379"
+ENV CI=true
+
+RUN bun run build
+
+# 运行阶段 - 使用 bun 镜像，跳过 apt 安装
+FROM docker.1ms.run/oven/bun:slim AS runner
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOST=0.0.0.0
+WORKDIR /app
+
+# 只安装 curl 用于健康检查（使用 bun 自带的包管理）
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=build --chown=bun:bun /app/public ./public
+COPY --from=build --chown=bun:bun /app/drizzle ./drizzle
+COPY --from=build --chown=bun:bun /app/messages ./messages
+COPY --from=build --chown=bun:bun /app/.next/standalone ./
+COPY --from=build --chown=bun:bun /app/.next/server ./.next/server
+COPY --from=build --chown=bun:bun /app/.next/static ./.next/static
+
+USER bun
+EXPOSE 3000
+
+CMD ["node", "server.js"]

@@ -1791,13 +1791,30 @@ export class ProxyForwarder {
       overrides["anthropic-beta"] = Array.from(betaFlags).join(", ");
     }
 
+    // claude-auth: 需要把 x-api-key 加入黑名单，避免原始请求中的 x-api-key 被透传
+    const blacklist = ["content-length", "connection"]; // 删除 content-length（动态计算）和 connection（undici 自动管理）
+    if (provider.providerType === "claude-auth") {
+      blacklist.push("x-api-key"); // 中转服务只使用 Bearer token，不需要 x-api-key
+    }
+
     const headerProcessor = HeaderProcessor.createForProxy({
-      blacklist: ["content-length", "connection"], // 删除 content-length（动态计算）和 connection（undici 自动管理）
+      blacklist,
       preserveClientIpHeaders: preserveClientIp,
       overrides,
     });
 
-    return headerProcessor.process(session.headers);
+    const processedHeaders = headerProcessor.process(session.headers);
+
+    // 调试日志：输出实际发送的请求头
+    logger.info("ProxyForwarder: Final outbound headers", {
+      providerId: provider.id,
+      providerName: provider.name,
+      providerType: provider.providerType,
+      headers: Object.fromEntries(processedHeaders.entries()),
+      blacklist,
+    });
+
+    return processedHeaders;
   }
 
   private static resolveClientIp(headers: Headers): {

@@ -45,18 +45,6 @@ export const SETTINGS_NAV_ITEMS: SettingsNavItem[] = [
     label: "API 文档",
     external: true,
   },
-  {
-    href: "https://claude-code-hub.app/",
-    labelKey: "nav.docs",
-    label: "使用文档",
-    external: true,
-  },
-  {
-    href: "https://github.com/ding113/claude-code-hub/issues",
-    labelKey: "nav.feedback",
-    label: "反馈问题",
-    external: true,
-  },
 ];
 
 // Helper function to get translated nav items

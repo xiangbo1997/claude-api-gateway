@@ -418,8 +418,8 @@ export function ProviderRichListItem({
             </Button>
           )}
 
-          {/* 熔断重置按钮（仅熔断时显示） */}
-          {canEdit && healthStatus && healthStatus.circuitState === "open" && (
+          {/* 熔断重置按钮（始终显示，根据状态变色） */}
+          {canEdit && healthStatus && (
             <Button
               size="icon"
               variant="ghost"
@@ -428,8 +428,17 @@ export function ProviderRichListItem({
                 handleResetCircuit();
               }}
               disabled={resetPending}
+              title={tList("resetCircuitTooltip")}
             >
-              <RotateCcw className="h-4 w-4 text-orange-600" />
+              <RotateCcw
+                className={`h-4 w-4 ${
+                  healthStatus.circuitState === "open"
+                    ? "text-red-600"
+                    : healthStatus.circuitState === "half-open"
+                      ? "text-orange-500"
+                      : "text-gray-400 hover:text-gray-600"
+                }`}
+              />
             </Button>
           )}
 

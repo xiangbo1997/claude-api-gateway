@@ -8,11 +8,11 @@ export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || `v${packageJso
 
 /**
  * GitHub 仓库信息
- * 用于获取最新版本
+ * 用于获取最新版本（已禁用）
  */
 export const GITHUB_REPO = {
-  owner: "ding113",
-  repo: "claude-code-hub",
+  owner: "",
+  repo: "",
 };
 
 /**

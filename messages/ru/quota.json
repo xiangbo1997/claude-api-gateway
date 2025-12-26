@@ -58,8 +58,50 @@
     "tabs": {
       "users": "Квоты пользователей",
       "keys": "Квоты ключей",
-      "providers": "Квоты провайдеров"
+      "providers": "Квоты провайдеров",
+      "balance": "Баланс провайдеров"
     }
+  },
+  "balance": {
+    "title": "Баланс провайдеров",
+    "description": "Просматривайте и управляйте остатками на счетах upstream-провайдеров",
+    "totalBalance": "Общий баланс",
+    "providerCount": "Настроено провайдеров: {count}",
+    "providerBalances": "Список балансов провайдеров",
+    "providerBalancesDesc": "Баланс и время последнего обновления для каждого провайдера",
+    "refreshAll": "Обновить все",
+    "refreshSuccess": "Успешно обновлено",
+    "refreshSuccessDesc": "Баланс {name} обновлён до ${balance}",
+    "refreshFailed": "Не удалось обновить",
+    "refreshAllSuccess": "Пакетное обновление завершено",
+    "refreshAllSuccessDesc": "Успехов: {success}, ошибок: {failed}",
+    "refreshAllPartialFailed": "Часть обновлений завершилась ошибкой",
+    "refreshAllFailed": "Пакетное обновление не удалось",
+    "editBalanceTitle": "Редактирование баланса",
+    "editBalanceDesc": "Ручное изменение баланса аккаунта {name}",
+    "balanceLabel": "Баланс (USD)",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "saving": "Сохранение...",
+    "invalidBalance": "Введите корректную сумму баланса",
+    "updateSuccess": "Баланс обновлён",
+    "updateSuccessDesc": "Баланс {name} обновлён до ${balance}",
+    "updateFailed": "Ошибка обновления",
+    "notSet": "Не задано",
+    "noProviders": "Данные о провайдерах отсутствуют",
+    "refreshFromApi": "Обновить через API",
+    "editBalance": "Редактировать баланс",
+    "columns": {
+      "provider": "Провайдер",
+      "balance": "Баланс",
+      "lastUpdated": "Последнее обновление",
+      "actions": "Действия"
+    },
+    "autoFetch": {
+      "enabled": "Автообновление",
+      "disabled": "Только вручную"
+    },
+    "lastUpdatedNever": "Ещё не обновлялось"
   },
   "users": {
     "title": "Статистика квот пользователей",

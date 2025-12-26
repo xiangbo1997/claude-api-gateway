@@ -1,0 +1,21 @@
+# Dockerfile - 最小化版本（跳过所有 apt-get）
+# 适用于网络慢的服务器
+
+FROM docker.1ms.run/library/node:22-slim AS runner
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOST=0.0.0.0
+WORKDIR /app
+
+# 直接复制预构建的文件，不安装任何额外包
+COPY --chown=node:node public ./public
+COPY --chown=node:node drizzle ./drizzle
+COPY --chown=node:node messages ./messages
+COPY --chown=node:node .next/standalone ./
+COPY --chown=node:node .next/server ./.next/server
+COPY --chown=node:node .next/static ./.next/static
+
+USER node
+EXPOSE 3000
+
+CMD ["node", "server.js"]

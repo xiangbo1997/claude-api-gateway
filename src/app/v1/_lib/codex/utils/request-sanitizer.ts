@@ -10,7 +10,7 @@
 
 import { CodexInstructionsCache } from "@/lib/codex-instructions-cache";
 import { logger } from "@/lib/logger";
-import { getDefaultInstructions } from "../../codex/constants/codex-instructions";
+import { getDefaultInstructions } from "../constants/codex-instructions";
 
 /**
  * 功能开关：是否启用 Codex Instructions 注入

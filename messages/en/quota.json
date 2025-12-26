@@ -58,8 +58,50 @@
     "tabs": {
       "users": "User Quotas",
       "keys": "Key Quotas",
-      "providers": "Provider Quotas"
+      "providers": "Provider Quotas",
+      "balance": "Provider Balance"
     }
+  },
+  "balance": {
+    "title": "Provider Balance",
+    "description": "View and manage upstream provider account balances",
+    "totalBalance": "Total Balance",
+    "providerCount": "{count} providers configured",
+    "providerBalances": "Provider Balance List",
+    "providerBalancesDesc": "View each provider's account balance and last update time",
+    "refreshAll": "Refresh All",
+    "refreshSuccess": "Refresh Successful",
+    "refreshSuccessDesc": "{name} balance updated to ${balance}",
+    "refreshFailed": "Refresh Failed",
+    "refreshAllSuccess": "Batch Refresh Complete",
+    "refreshAllSuccessDesc": "{success} succeeded, {failed} failed",
+    "refreshAllPartialFailed": "Some Refreshes Failed",
+    "refreshAllFailed": "Batch Refresh Failed",
+    "editBalanceTitle": "Edit Balance",
+    "editBalanceDesc": "Manually set the account balance for {name}",
+    "balanceLabel": "Balance (USD)",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "invalidBalance": "Please enter a valid balance amount",
+    "updateSuccess": "Update Successful",
+    "updateSuccessDesc": "{name} balance updated to ${balance}",
+    "updateFailed": "Update Failed",
+    "notSet": "Not Set",
+    "noProviders": "No provider data available",
+    "refreshFromApi": "Refresh from API",
+    "editBalance": "Edit Balance",
+    "columns": {
+      "provider": "Provider",
+      "balance": "Balance",
+      "lastUpdated": "Last Updated",
+      "actions": "Actions"
+    },
+    "autoFetch": {
+      "enabled": "Auto refresh",
+      "disabled": "Manual update"
+    },
+    "lastUpdatedNever": "Never updated"
   },
   "users": {
     "title": "User Quota Statistics",

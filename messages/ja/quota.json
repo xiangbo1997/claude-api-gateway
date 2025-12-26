@@ -58,8 +58,50 @@
     "tabs": {
       "users": "ユーザークォータ",
       "keys": "キークォータ",
-      "providers": "プロバイダークォータ"
+      "providers": "プロバイダークォータ",
+      "balance": "プロバイダー残高"
     }
+  },
+  "balance": {
+    "title": "プロバイダー残高",
+    "description": "上流プロバイダーのアカウント残高を表示・管理します",
+    "totalBalance": "合計残高",
+    "providerCount": "設定済み {count} 件のプロバイダー",
+    "providerBalances": "プロバイダー残高一覧",
+    "providerBalancesDesc": "各プロバイダーの残高と最終更新時刻を確認します",
+    "refreshAll": "すべて更新",
+    "refreshSuccess": "更新成功",
+    "refreshSuccessDesc": "{name} の残高が ${balance} に更新されました",
+    "refreshFailed": "更新失敗",
+    "refreshAllSuccess": "一括更新完了",
+    "refreshAllSuccessDesc": "{success} 件成功、{failed} 件失敗",
+    "refreshAllPartialFailed": "一部の更新に失敗しました",
+    "refreshAllFailed": "一括更新に失敗しました",
+    "editBalanceTitle": "残高を編集",
+    "editBalanceDesc": "{name} のアカウント残高を手動で設定します",
+    "balanceLabel": "残高 (USD)",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "saving": "保存中...",
+    "invalidBalance": "有効な残高を入力してください",
+    "updateSuccess": "更新成功",
+    "updateSuccessDesc": "{name} の残高が ${balance} に更新されました",
+    "updateFailed": "更新に失敗しました",
+    "notSet": "未設定",
+    "noProviders": "プロバイダーデータがありません",
+    "refreshFromApi": "API から更新",
+    "editBalance": "残高を編集",
+    "columns": {
+      "provider": "プロバイダー",
+      "balance": "残高",
+      "lastUpdated": "最終更新",
+      "actions": "操作"
+    },
+    "autoFetch": {
+      "enabled": "自動更新",
+      "disabled": "手動更新"
+    },
+    "lastUpdatedNever": "未更新"
   },
   "users": {
     "title": "ユーザークォータ統計",

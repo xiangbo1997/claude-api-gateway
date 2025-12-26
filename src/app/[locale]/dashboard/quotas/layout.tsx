@@ -20,6 +20,9 @@ export default async function QuotasLayout({ children }: { children: React.React
           <Link href="/dashboard/quotas/providers">
             <TabsTrigger value="providers">{t("tabs.providers")}</TabsTrigger>
           </Link>
+          <Link href="/dashboard/quotas/balance">
+            <TabsTrigger value="balance">{t("tabs.balance")}</TabsTrigger>
+          </Link>
         </TabsList>
 
         {children}

@@ -1,6 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { and, eq, isNull } from "drizzle-orm";
+import { db } from "@/drizzle/db";
+import { providers } from "@/drizzle/schema";
 import { GeminiAuth } from "@/app/v1/_lib/gemini/auth";
 import { isClientAbortError } from "@/app/v1/_lib/proxy/errors";
 import { getSession } from "@/lib/auth";
@@ -2721,5 +2724,264 @@ export async function getProviderTestPresets(
       ok: false,
       error: "获取预置配置失败",
     };
+  }
+}
+
+// ============================================================================
+// 供应商余额管理
+// ============================================================================
+
+/**
+ * 供应商余额信息
+ */
+export type ProviderBalanceInfo = {
+  providerId: number;
+  providerName: string;
+  balance: number | null;
+  lastUpdated: Date | null;
+  balanceFetchEnabled: boolean;
+};
+
+/**
+ * 获取所有供应商的余额汇总
+ */
+export async function getProvidersBalanceSummary(): Promise<
+  ActionResult<{
+    totalBalance: number;
+    providers: ProviderBalanceInfo[];
+  }>
+> {
+  const session = await getSession();
+  if (!session || session.user.role !== "admin") {
+    return { ok: false, error: "无权限执行此操作" };
+  }
+
+  try {
+    const providerList = await db
+      .select({
+        id: providers.id,
+        name: providers.name,
+        upstreamBalance: providers.upstreamBalance,
+        balanceLastUpdated: providers.balanceLastUpdated,
+        balanceFetchEnabled: providers.balanceFetchEnabled,
+        isEnabled: providers.isEnabled,
+      })
+      .from(providers)
+      .where(isNull(providers.deletedAt));
+
+    const balanceInfos: ProviderBalanceInfo[] = providerList.map((p) => ({
+      providerId: p.id,
+      providerName: p.name,
+      balance: p.upstreamBalance ? parseFloat(p.upstreamBalance) : null,
+      lastUpdated: p.balanceLastUpdated,
+      balanceFetchEnabled: p.balanceFetchEnabled ?? false,
+    }));
+
+    // 计算总余额（只计算有余额数据的供应商）
+    const totalBalance = balanceInfos.reduce((sum, p) => sum + (p.balance ?? 0), 0);
+
+    return {
+      ok: true,
+      data: {
+        totalBalance,
+        providers: balanceInfos,
+      },
+    };
+  } catch (error) {
+    logger.error("获取供应商余额汇总失败:", error);
+    return { ok: false, error: "获取供应商余额汇总失败" };
+  }
+}
+
+/**
+ * 手动更新供应商余额
+ */
+export async function updateProviderBalance(
+  providerId: number,
+  balance: number
+): Promise<ActionResult> {
+  const session = await getSession();
+  if (!session || session.user.role !== "admin") {
+    return { ok: false, error: "无权限执行此操作" };
+  }
+
+  try {
+    await db
+      .update(providers)
+      .set({
+        upstreamBalance: balance.toString(),
+        balanceLastUpdated: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(providers.id, providerId));
+
+    revalidatePath("/dashboard/quotas");
+    revalidatePath("/settings/providers");
+
+    return { ok: true };
+  } catch (error) {
+    logger.error("更新供应商余额失败:", error);
+    return { ok: false, error: "更新供应商余额失败" };
+  }
+}
+
+/**
+ * 从上游API获取供应商余额（中转服务通用接口）
+ * 支持常见的中转服务余额API格式
+ */
+export async function fetchProviderBalanceFromApi(
+  providerId: number
+): Promise<ActionResult<{ balance: number }>> {
+  const session = await getSession();
+  if (!session || session.user.role !== "admin") {
+    return { ok: false, error: "无权限执行此操作" };
+  }
+
+  try {
+    // 获取供应商信息
+    const provider = await db
+      .select({
+        id: providers.id,
+        name: providers.name,
+        url: providers.url,
+        key: providers.key,
+        balanceApiEndpoint: providers.balanceApiEndpoint,
+        providerType: providers.providerType,
+      })
+      .from(providers)
+      .where(eq(providers.id, providerId))
+      .limit(1);
+
+    if (provider.length === 0) {
+      return { ok: false, error: "供应商不存在" };
+    }
+
+    const p = provider[0];
+
+    // 构建余额API URL
+    let balanceUrl: string;
+    if (p.balanceApiEndpoint) {
+      // 使用自定义端点
+      balanceUrl = p.balanceApiEndpoint;
+    } else {
+      // 使用默认端点（基于供应商URL）
+      const baseUrl = p.url.replace(/\/v1\/?$/, "").replace(/\/$/, "");
+      // 常见的中转服务余额端点
+      balanceUrl = `${baseUrl}/dashboard/billing/credit_grants`;
+    }
+
+    // 调用余额API
+    const response = await fetch(balanceUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${p.key}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      logger.error("获取供应商余额API失败:", {
+        providerId,
+        status: response.status,
+        error: errorText,
+      });
+      return {
+        ok: false,
+        error: `API返回错误: ${response.status} - ${errorText.slice(0, 100)}`,
+      };
+    }
+
+    const data = await response.json();
+
+    // 尝试解析不同格式的余额响应
+    let balance: number | null = null;
+
+    // 格式1: { total_granted, total_used, total_available }（OpenAI风格）
+    if (typeof data.total_available === "number") {
+      balance = data.total_available;
+    }
+    // 格式2: { balance } 或 { data: { balance } }
+    else if (typeof data.balance === "number") {
+      balance = data.balance;
+    } else if (data.data && typeof data.data.balance === "number") {
+      balance = data.data.balance;
+    }
+    // 格式3: { credit_balance } 或 { credits }
+    else if (typeof data.credit_balance === "number") {
+      balance = data.credit_balance;
+    } else if (typeof data.credits === "number") {
+      balance = data.credits;
+    }
+    // 格式4: { grants: { total_available } }
+    else if (data.grants && typeof data.grants.total_available === "number") {
+      balance = data.grants.total_available;
+    }
+
+    if (balance === null) {
+      logger.warn("无法解析余额响应格式:", { providerId, data });
+      return { ok: false, error: "无法解析余额响应格式，请检查API端点或手动输入余额" };
+    }
+
+    // 更新数据库
+    await db
+      .update(providers)
+      .set({
+        upstreamBalance: balance.toString(),
+        balanceLastUpdated: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(providers.id, providerId));
+
+    revalidatePath("/dashboard/quotas");
+    revalidatePath("/settings/providers");
+
+    return { ok: true, data: { balance } };
+  } catch (error) {
+    logger.error("获取供应商余额失败:", error);
+    const message = error instanceof Error ? error.message : "获取供应商余额失败";
+    return { ok: false, error: message };
+  }
+}
+
+/**
+ * 批量刷新所有启用自动获取的供应商余额
+ */
+export async function refreshAllProviderBalances(): Promise<
+  ActionResult<{ success: number; failed: number; errors: string[] }>
+> {
+  const session = await getSession();
+  if (!session || session.user.role !== "admin") {
+    return { ok: false, error: "无权限执行此操作" };
+  }
+
+  try {
+    // 获取所有启用自动获取余额的供应商
+    const enabledProviders = await db
+      .select({ id: providers.id, name: providers.name })
+      .from(providers)
+      .where(and(isNull(providers.deletedAt), eq(providers.balanceFetchEnabled, true)));
+
+    let success = 0;
+    let failed = 0;
+    const errors: string[] = [];
+
+    for (const p of enabledProviders) {
+      const result = await fetchProviderBalanceFromApi(p.id);
+      if (result.ok) {
+        success++;
+      } else {
+        failed++;
+        errors.push(`${p.name}: ${result.error}`);
+      }
+    }
+
+    revalidatePath("/dashboard/quotas");
+    revalidatePath("/settings/providers");
+
+    return { ok: true, data: { success, failed, errors } };
+  } catch (error) {
+    logger.error("批量刷新供应商余额失败:", error);
+    return { ok: false, error: "批量刷新供应商余额失败" };
   }
 }
